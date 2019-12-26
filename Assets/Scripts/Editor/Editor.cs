@@ -280,10 +280,6 @@ public class Editor : MonoBehaviour
             }
             else if (Input.GetKeyDown("left") && this.Borders()[0] > 0)
             {
-                if (base.GetComponent<AudioSource>().isPlaying)
-                {
-                    MonoBehaviour.print(1);
-                }
                 this.MoveRoom(-1, 0);
             }
             if (Input.GetKeyDown("escape"))
