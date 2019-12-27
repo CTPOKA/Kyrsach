@@ -268,19 +268,19 @@ public class Editor : MonoBehaviour
             }
             if (Input.GetKeyDown("up") && this.Borders()[3] < this.Y - 1)
             {
-                this.MoveRoom(0, 1);
+                MoveRoom(0, 1);
             }
             else if (Input.GetKeyDown("down") && this.Borders()[2] > 0)
             {
-                this.MoveRoom(0, -1);
+                MoveRoom(0, -1);
             }
             else if (Input.GetKeyDown("right") && this.Borders()[1] < this.X - 1)
             {
-                this.MoveRoom(1, 0);
+                MoveRoom(1, 0);
             }
             else if (Input.GetKeyDown("left") && this.Borders()[0] > 0)
             {
-                this.MoveRoom(-1, 0);
+                MoveRoom(-1, 0);
             }
             if (Input.GetKeyDown("escape"))
             {

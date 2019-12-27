@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
@@ -9,41 +10,51 @@ public class Crypt : MonoBehaviour
 
     private void Awake()
     {
-        Crypt.crypt.Key = Encoding.ASCII.GetBytes("ABCDEFGH");
-        Crypt.crypt.IV = Encoding.ASCII.GetBytes("ABCDEFGH");
-    }
-
-    public static void Write(string filepath, string data)
-    {
-        FileStream expr_17 = new FileStream(Application.persistentDataPath + "/" + filepath, FileMode.OpenOrCreate, FileAccess.Write);
-        CryptoStream expr_28 = new CryptoStream(expr_17, Crypt.crypt.CreateEncryptor(), CryptoStreamMode.Write);
-        StreamWriter expr_2E = new StreamWriter(expr_28);
-        expr_2E.Write(data);
-        expr_2E.Close();
-        expr_28.Close();
-        expr_17.Close();
-    }
-
-    public static string Read(string filepath)
-    {
-        FileStream expr_17 = new FileStream(Application.persistentDataPath + "/" + filepath, FileMode.Open, FileAccess.Read);
-        CryptoStream cryptoStream = new CryptoStream(expr_17, Crypt.crypt.CreateDecryptor(), CryptoStreamMode.Read);
-        StreamReader expr_2F = new StreamReader(cryptoStream);
-        string result = expr_2F.ReadToEnd();
-        cryptoStream.Close();
-        expr_2F.Close();
-        expr_17.Close();
-        return result;
+        crypt.Key = Encoding.ASCII.GetBytes("ABCDEFGH");
+        crypt.IV = Encoding.ASCII.GetBytes("ABCDEFGH");
     }
 
     public static bool Check(string filepath)
     {
-        return new StreamReader(new CryptoStream(new FileStream(filepath, FileMode.Open, FileAccess.Read), Crypt.crypt.CreateDecryptor(), CryptoStreamMode.Read)).ReadToEnd().Split(new char[]
+        FileStream stream1 = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+        CryptoStream stream = new CryptoStream(stream1, crypt.CreateDecryptor(), CryptoStreamMode.Read);
+        StreamReader reader1 = new StreamReader(stream);
+        bool ch = false;
+        try
         {
-            '|'
-        })[0].Split(new char[]
+            string str = reader1.ReadToEnd();
+            ch = str.Split('|')[0].Split(' ')[1] == "+";
+            stream.Close();
+            reader1.Close();
+            stream1.Close();
+        }
+        catch
         {
-            ' '
-        })[1] == "+";
+            Error.ErrorMassage("Ошибка чтения файла " + filepath);
+        }
+        return ch;
+    }
+
+    public static string Read(string filepath)
+    {
+        FileStream stream1 = new FileStream(Application.persistentDataPath + "/" + filepath, (FileMode)FileMode.Open, (FileAccess)FileAccess.Read);
+        CryptoStream stream = new CryptoStream((Stream)stream1, crypt.CreateDecryptor(), (CryptoStreamMode)CryptoStreamMode.Read);
+        StreamReader reader1 = new StreamReader((Stream)stream);
+        string str = reader1.ReadToEnd();
+        stream.Close();
+        reader1.Close();
+        stream1.Close();
+        return str;
+    }
+
+    public static void Write(string filepath, string data)
+    {
+        FileStream stream1 = new FileStream(Application.persistentDataPath + "/" + filepath, (FileMode)FileMode.OpenOrCreate, (FileAccess)FileAccess.Write);
+        CryptoStream stream2 = new CryptoStream((Stream)stream1, crypt.CreateEncryptor(), (CryptoStreamMode)CryptoStreamMode.Write);
+        StreamWriter writer1 = new StreamWriter((Stream)stream2);
+        writer1.Write(data);
+        writer1.Close();
+        stream2.Close();
+        stream1.Close();
     }
 }

@@ -29,21 +29,21 @@ public class Menu : MonoBehaviour
     private void Update()
     {
         Player component;
-        if (this.esc && RoomSpace.M.objects[1] != null && (component = RoomSpace.M.objects[1].GetComponent<Player>()) != null)
+        if (esc && RoomSpace.M.objects[1] != null && (component = RoomSpace.M.objects[1].GetComponent<Player>()) != null)
         {
             if (Input.GetKeyDown("escape"))
             {
-                if (base.GetComponent<Canvas>().enabled)
+                if (GetComponent<Canvas>().enabled)
                 {
-                    base.GetComponent<Canvas>().enabled = false;
+                    GetComponent<Canvas>().enabled = false;
                 }
                 else
                 {
-                    base.GetComponent<Canvas>().enabled = true;
+                    GetComponent<Canvas>().enabled = true;
                     component.enabled = false;
                 }
             }
-            if (!base.GetComponent<Canvas>().enabled)
+            if (!GetComponent<Canvas>().enabled)
             {
                 component.enabled = true;
                 return;
@@ -51,7 +51,7 @@ public class Menu : MonoBehaviour
         }
         else
         {
-            this.esc = false;
+            esc = false;
         }
     }
 

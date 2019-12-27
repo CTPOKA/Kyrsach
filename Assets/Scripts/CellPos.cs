@@ -32,10 +32,23 @@ public class CellPos : MonoBehaviour
 
     public void Move(int mx, int my)
     {
+        dx = mx;
+        dy = my;
         StartCoroutine(MoveAnim());
         IEnumerator MoveAnim()
         {
-            yield return new WaitForSeconds(0.1f);
+            while (Player.timeout > 0f)
+            {
+                float x = (X * 1.15f) + ((dx * 1.15f) * (1f - Player.timeout));
+                float y = (Y * 0.78f) + ((dy * 0.78f) * (1f - Player.timeout));
+                float num4 = 0f;
+                if (this.dy < 0)
+                {
+                    num4 = 1f;
+                }
+                transform.position = new Vector3(x, y, (Y - Z) - num4);
+                yield return new WaitForSeconds(0.05f);
+            }
         }
     }
 }
