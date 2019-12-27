@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.IO;
 using UnityEngine;
 
 public class RoomSpace : MonoBehaviour
@@ -73,55 +74,48 @@ public class RoomSpace : MonoBehaviour
 
     public void LoadFloor(string path = "lastsave.ncs")
     {
-        string[] strArray2;
+        string[] strArray;
         this.keys[0] = 0;
         this.keys[1] = 0;
         if (path == "")
         {
             path = file;
         }
-        char[] separator = new char[] { '|' };
-        string[] strArray = Crypt.Read(path).Split(separator);
-        int index = 0;
-        char[] chArray2 = new char[] { ' ' };
-        int num2 = int.Parse(strArray[index].Split(chArray2)[0]);
-        index++;
-        this.map = new int[num2, 8];
-        this.floor = new int[num2][][,];
-        for (int i = 0; i < num2; i++)
+        StreamReader reader = new StreamReader(Application.dataPath + "/Saves/" + path);
+        char[] separator = new char[] { ' ' };
+        int num = int.Parse(reader.ReadLine().Split(separator)[0]);
+        this.map = new int[num, 8];
+        floor = new int[num][][,];
+        for (int i = 0; i < num; i++)
         {
             this.floor[i] = new int[2][,];
-            char[] chArray3 = new char[] { ' ' };
-            strArray2 = strArray[index].Split(chArray3);
-            index++;
+            char[] chArray2 = new char[] { ' ' };
+            strArray = reader.ReadLine().Split(chArray2);
             for (int k = 0; k < 8; k++)
             {
-                this.map[i, k] = int.Parse(strArray2[k]);
+                this.map[i, k] = int.Parse(strArray[k]);
             }
         }
-        char[] chArray4 = new char[] { ' ' };
-        strArray2 = strArray[index].Split(chArray4);
-        index++;
-        roomid[0] = int.Parse(strArray2[0]);
-        roomid[1] = int.Parse(strArray2[1]);
-        for (int j = 0; j < num2; j++)
+        char[] chArray3 = new char[] { ' ' };
+        strArray = reader.ReadLine().Split(chArray3);
+        roomid[0] = int.Parse(strArray[0]);
+        roomid[1] = int.Parse(strArray[1]);
+        for (int j = 0; j < num; j++)
         {
-            char[] chArray5 = new char[] { ' ' };
-            strArray2 = strArray[index].Split(chArray5);
-            index++;
-            int num6 = int.Parse(strArray2[0]);
-            int num7 = int.Parse(strArray2[1]);
+            char[] chArray4 = new char[] { ' ' };
+            strArray = reader.ReadLine().Split(chArray4);
+            int num5 = int.Parse(strArray[0]);
+            int num6 = int.Parse(strArray[1]);
             for (int k = 0; k < 2; k++)
             {
-                this.floor[j][k] = new int[num6, num7];
-                for (int m = 0; m < num7; m++)
+                this.floor[j][k] = new int[num5, num6];
+                for (int m = 0; m < num6; m++)
                 {
-                    char[] chArray6 = new char[] { ' ' };
-                    strArray2 = strArray[index].Split(chArray6);
-                    index++;
-                    for (int n = 0; n < num6; n++)
+                    char[] chArray5 = new char[] { ' ' };
+                    strArray = reader.ReadLine().Split(chArray5);
+                    for (int n = 0; n < num5; n++)
                     {
-                        if ((this.floor[j][k][n, m] = int.Parse(strArray2[n])) == 12)
+                        if ((this.floor[j][k][n, m] = int.Parse(strArray[n])) == 12)
                         {
                             this.keys[0]++;
                         }
@@ -129,6 +123,7 @@ public class RoomSpace : MonoBehaviour
                 }
             }
         }
+        reader.Close();
         this.PrintRoom(roomid[0], roomid[1]);
     }
 
@@ -169,7 +164,7 @@ public class RoomSpace : MonoBehaviour
         int[][,] R;
         int[] FindDoor(int id)
         {
-            int[] p = new int[2];
+            int[] numArray2 = new int[] { -1, -1 };
             switch (id)
             {
                 case 0:
@@ -177,10 +172,10 @@ public class RoomSpace : MonoBehaviour
                     {
                         if (door[R[0][i, this.maxY - 1]])
                         {
-                            p[0] = i;
+                            numArray2[0] = i;
                         }
                     }
-                    p[1] = this.maxY - 1;
+                    numArray2[1] = this.maxY - 1;
                     break;
 
                 case 1:
@@ -188,10 +183,10 @@ public class RoomSpace : MonoBehaviour
                     {
                         if (door[R[0][i, 0]])
                         {
-                            p[0] = i;
+                            numArray2[0] = i;
                         }
                     }
-                    p[1] = 0;
+                    numArray2[1] = 0;
                     break;
 
                 case 2:
@@ -199,10 +194,10 @@ public class RoomSpace : MonoBehaviour
                     {
                         if (door[R[0][this.maxX - 1, i]])
                         {
-                            p[1] = i;
+                            numArray2[1] = i;
                         }
                     }
-                    p[0] = this.maxX - 1;
+                    numArray2[0] = this.maxX - 1;
                     break;
 
                 case 3:
@@ -210,15 +205,15 @@ public class RoomSpace : MonoBehaviour
                     {
                         if (door[R[0][0, i]])
                         {
-                            p[1] = i;
+                            numArray2[1] = i;
                         }
                     }
-                    p[0] = 0;
+                    numArray2[0] = 0;
                     break;
             }
-            if (((p[0] >= 0) && (p[1] >= 0)) && intangible[R[1][p[0], p[1]]])
+            if (((numArray2[0] >= 0) && (numArray2[1] >= 0)) && intangible[R[1][numArray2[0], numArray2[1]]])
             {
-                return p;
+                return numArray2;
             }
             return null;
         }
@@ -277,49 +272,47 @@ public class RoomSpace : MonoBehaviour
 
     public void SaveGame(string path = "lastsave.ncs")
     {
-        string str2;
-        string data = "";
+        string str;
+        StreamWriter writer = new StreamWriter(Application.dataPath + "/Saves/" + path);
         int length = this.floor.Length;
-        data = data + ((int)length).ToString() + " -|";
+        writer.WriteLine(((int)length).ToString() + " -");
         for (int i = 0; i < length; i++)
         {
-            str2 = "";
+            str = "";
             for (int k = 0; k < 8; k++)
             {
-                str2 = str2 + ((int)this.map[i, k]).ToString();
+                str = str + ((int)this.map[i, k]).ToString();
                 if (k < 7)
                 {
-                    str2 = str2 + " ";
+                    str = str + " ";
                 }
             }
-            data = data + str2 + "|";
+            writer.WriteLine(str);
         }
-        string[] textArray1 = new string[] { data, ((int)roomid[0]).ToString(), " ", ((int)roomid[1]).ToString(), "|" };
-        data = string.Concat((string[])textArray1);
+        writer.WriteLine(((int)roomid[0]).ToString() + " " + ((int)roomid[1]).ToString());
         for (int j = 0; j < length; j++)
         {
             int num5 = this.floor[j][0].GetLength(0);
             int num6 = this.floor[j][0].GetLength(1);
-            string[] textArray2 = new string[] { data, ((int)num5).ToString(), " ", ((int)num6).ToString(), "|" };
-            data = string.Concat((string[])textArray2);
+            writer.WriteLine(((int)num5).ToString() + " " + ((int)num6).ToString());
             for (int k = 0; k < 2; k++)
             {
                 for (int m = 0; m < num6; m++)
                 {
-                    str2 = "";
+                    str = "";
                     for (int n = 0; n < num5; n++)
                     {
-                        str2 = str2 + ((int)this.floor[j][k][n, m]);
+                        str = str + ((int)this.floor[j][k][n, m]);
                         if (n < (num5 - 1))
                         {
-                            str2 = str2 + " ";
+                            str = str + " ";
                         }
                     }
-                    data = data + str2 + "|";
+                    writer.WriteLine(str);
                 }
             }
         }
-        Crypt.Write(path, data);
+        writer.Close();
     }
 
     public void SaveRoom()
@@ -362,7 +355,11 @@ public class RoomSpace : MonoBehaviour
 
     public void Victory()
     {
-        string str = Crypt.Read(file);
-        Crypt.Write(file, str.Replace("-", "+"));
+        StreamReader reader1 = new StreamReader(Application.dataPath + "/Saves/" + file);
+        string str = reader1.ReadToEnd();
+        reader1.Close();
+        StreamWriter writer1 = new StreamWriter(Application.dataPath + "/Saves/" + file);
+        writer1.Write(str.Replace("-", "+"));
+        writer1.Close();
     }
 }
