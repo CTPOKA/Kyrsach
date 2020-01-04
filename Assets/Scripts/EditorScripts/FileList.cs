@@ -11,14 +11,17 @@ public class FileList : MonoBehaviour
 
     public static Dropdown caption;
 
+    public GameObject flist;
+
     private void Awake()
     {
-        FileList.caption = base.GetComponent<Dropdown>();
-        this.Init();
+        caption = GetComponent<Dropdown>();
+        Init(Editor.file);
     }
 
-    private void Init()
+    private void Init(string caption = newroom)
     {
+        flist.GetComponent<FloorEditor>().Init();
         try
         {
             List<string> list = new List<string>();
@@ -38,8 +41,9 @@ public class FileList : MonoBehaviour
                     '.'
                 })[0]);
             }
-            base.GetComponent<Dropdown>().ClearOptions();
-            base.GetComponent<Dropdown>().AddOptions(list);
+            GetComponent<Dropdown>().ClearOptions();
+            GetComponent<Dropdown>().AddOptions(list);
+            GetComponent<Dropdown>().value = list.IndexOf(caption);
         }
         catch
         {
@@ -73,8 +77,8 @@ public class FileList : MonoBehaviour
         if (text != "")
         {
             Editor.E.SaveRoom(text + ".ncs");
+            Init(text);
         }
-        this.Init();
     }
 
     public void Delete()

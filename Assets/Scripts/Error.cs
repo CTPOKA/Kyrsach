@@ -7,13 +7,16 @@ public class Error : MonoBehaviour
 
     private void Awake()
     {
-        Error.err = base.gameObject;
+        err = gameObject;
     }
 
     public static void ErrorMassage(string massage)
     {
-        Error.err.GetComponentInParent<Canvas>().enabled = true;
-        Error.err.GetComponentInChildren<Text>().text = massage;
+        if (err != null)
+        {
+            err.GetComponentInParent<Canvas>().enabled = true;
+            err.GetComponentInChildren<Text>().text = massage;
+        }
         Debug.Log(massage);
     }
 }

@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 956723896355253793}
   - component: {fileID: 2996403082622253154}
   - component: {fileID: 7337270578633167562}
+  - component: {fileID: 3155973113019315670}
+  - component: {fileID: 2884794931730254223}
   m_Layer: 0
   m_Name: '[12]'
   m_TagString: Untagged
@@ -97,3 +99,31 @@ MonoBehaviour:
   dx: 0
   dy: 0
   Z: 0
+--- !u!111 &3155973113019315670
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3139724983224856557}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: a83858f46c7c887468bdf87bbe7912ee, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: a83858f46c7c887468bdf87bbe7912ee, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
+--- !u!114 &2884794931730254223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3139724983224856557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4c58a08b9a4b654488055cdfefbdb62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -39,6 +39,8 @@ public class Editor : MonoBehaviour
 
     public BitArray OFF = new BitArray(5);
 
+    public static string file = "backup";
+
     private void Awake()
     {
         Editor.E = this;
@@ -53,7 +55,7 @@ public class Editor : MonoBehaviour
             }
         }
         this.SaveBackup();
-        this.LoadRoom("backup.ncs");
+        this.LoadRoom();
     }
 
     public void SetBrush(int t)
@@ -171,10 +173,11 @@ public class Editor : MonoBehaviour
         };
     }
 
-    public void LoadRoom(string path = "backup.ncs")
+    public void LoadRoom(string path = "")
     {
         try
         {
+            if (path == "") path = file + ".ncs";
             string arg_16_0 = Application.persistentDataPath + "/Rooms/" + path;
             this.Clear();
             if (File.Exists(arg_16_0))
@@ -254,58 +257,56 @@ public class Editor : MonoBehaviour
 
     private void Update()
     {
-        if (!GameObject.Find("SaveRoom").GetComponent<Canvas>().enabled && !GameObject.Find("SaveFloat").GetComponent<Canvas>().enabled)
+        if (Input.GetKeyDown(KeyCode.Z) && Input.GetKey(KeyCode.LeftControl) && this.bn > this.bmin + 1)
         {
-            if (Input.GetKeyDown(KeyCode.Z) && Input.GetKey(KeyCode.LeftControl) && this.bn > this.bmin + 1)
+            this.bn--;
+            this.LoadBackup();
+        }
+        if (Input.GetKeyDown(KeyCode.Y) && Input.GetKey(KeyCode.LeftControl) && this.bn < this.bmax)
+        {
+            this.bn++;
+            this.LoadBackup();
+        }
+        if (Input.GetKeyDown("up") && this.Borders()[3] < this.Y - 1)
+        {
+            MoveRoom(0, 1);
+        }
+        else if (Input.GetKeyDown("down") && this.Borders()[2] > 0)
+        {
+            MoveRoom(0, -1);
+        }
+        else if (Input.GetKeyDown("right") && this.Borders()[1] < this.X - 1)
+        {
+            MoveRoom(1, 0);
+        }
+        else if (Input.GetKeyDown("left") && this.Borders()[0] > 0)
+        {
+            MoveRoom(-1, 0);
+        }
+        if (Input.GetKeyDown("escape"))
+        {
+            string text = "*Новая комната*";
+            if (FileList.caption != null)
             {
-                this.bn--;
-                this.LoadBackup();
+                text = FileList.caption.captionText.text;
             }
-            if (Input.GetKeyDown(KeyCode.Y) && Input.GetKey(KeyCode.LeftControl) && this.bn < this.bmax)
+            if (text == "*Новая комната*")
             {
-                this.bn++;
-                this.LoadBackup();
+                file = "backup";
             }
-            if (Input.GetKeyDown("up") && this.Borders()[3] < this.Y - 1)
+            else
             {
-                MoveRoom(0, 1);
+                file = text;
             }
-            else if (Input.GetKeyDown("down") && this.Borders()[2] > 0)
-            {
-                MoveRoom(0, -1);
-            }
-            else if (Input.GetKeyDown("right") && this.Borders()[1] < this.X - 1)
-            {
-                MoveRoom(1, 0);
-            }
-            else if (Input.GetKeyDown("left") && this.Borders()[0] > 0)
-            {
-                MoveRoom(-1, 0);
-            }
-            if (Input.GetKeyDown("escape"))
-            {
-                string text = "*Новая комната*";
-                if (FileList.caption != null)
-                {
-                    text = FileList.caption.captionText.text;
-                }
-                if (text == "*Новая комната*")
-                {
-                    this.SaveRoom("backup.ncs");
-                }
-                else
-                {
-                    this.SaveRoom(text + ".ncs");
-                }
-                FloorEditor.names.Clear();
-                FloorEditor.map.Clear();
-                SceneManager.LoadScene("menu");
-            }
-            if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Delete))
-            {
-                this.Clear();
-                this.SaveBackup();
-            }
+            this.SaveRoom(file + ".ncs");
+            FloorEditor.names.Clear();
+            FloorEditor.map.Clear();
+            SceneManager.LoadScene("menu");
+        }
+        if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Delete))
+        {
+            this.Clear();
+            this.SaveBackup();
         }
     }
 
@@ -324,5 +325,10 @@ public class Editor : MonoBehaviour
     public void TriggerOFF()
     {
         this.OFF[1] = !this.OFF[1];
+    }
+
+    public void AllOFF(bool off)
+    {
+        OFF[2] = off;
     }
 }

@@ -41,14 +41,15 @@ public class CellPos : MonoBehaviour
             {
                 float x = (X * 1.15f) + ((dx * 1.15f) * (1f - Player.timeout));
                 float y = (Y * 0.78f) + ((dy * 0.78f) * (1f - Player.timeout));
-                float num4 = 0f;
+                float z = 0f;
                 if (this.dy < 0)
                 {
-                    num4 = 1f;
+                    z = 1f;
                 }
-                transform.position = new Vector3(x, y, (Y - Z) - num4);
+                transform.position = new Vector3(x, y, (Y - Z) - z);
                 yield return new WaitForSeconds(0.05f);
             }
+            SetPos(X + dx, Y + dy);
         }
     }
 }

@@ -1,16 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Drag : MonoBehaviour, IDragHandler, IEventSystemHandler, IPointerEnterHandler
+public class Drug : MonoBehaviour, IEventSystemHandler, IDragHandler, IPointerClickHandler
 {
     public void OnDrag(PointerEventData eventData)
     {
-        base.transform.position = Input.mousePosition;
+        transform.position = Input.mousePosition;
     }
-
-    public void OnPointerEnter(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        base.transform.SetSiblingIndex(99);
+        transform.SetSiblingIndex(99);
     }
 }

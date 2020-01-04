@@ -63,7 +63,7 @@ public class Cell : MonoBehaviour
     private void OnMouseOver()
     {
         this.on = false;
-        if (!Editor.E.OFF[0] && !Editor.E.OFF[1])
+        if (!Editor.E.OFF[0] && !Editor.E.OFF[1] && !Editor.E.OFF[2])
         {
             if (Input.GetMouseButton(1))
             {

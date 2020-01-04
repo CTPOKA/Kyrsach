@@ -17,8 +17,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        this.x = base.GetComponent<CellPos>().X;
-        this.y = base.GetComponent<CellPos>().Y;
+        x = base.GetComponent<CellPos>().X;
+        y = base.GetComponent<CellPos>().Y;
         try
         {
             if (RoomSpace.killing[RoomSpace.M.GetCell(this.x, this.y, 0)])
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
         }
         catch
         {
-            UnityEngine.Object.Destroy(this);
+            Destroy(this);
             Error.ErrorMassage("Ошибка расстановки. Уровень не правильно построен");
         }
         this.dx = 0;
@@ -59,26 +59,22 @@ public class Player : MonoBehaviour
             {
                 this.Death();
             }
-            else if (Input.GetKeyDown(KeyCode.Q))
-            {
-                Debug.Log(RoomSpace.bigobject[2]);
-            }
             if (this.dx != 0 || this.dy != 0)
             {
-                Player.timeout = 1f;
-                this.Move();
+                timeout = 1f;
+                Move();
                 return;
             }
         }
         else
         {
-            Player.timeout -= Time.deltaTime * (float)Player.speed;
+            timeout -= Time.deltaTime * speed;
         }
     }
 
     private void Move()
     {
-        if (RoomSpace.M.GetCell(this.x, this.y, 0) == 10)
+        if (RoomSpace.M.GetCell(x+dx, y+dy, 0) == 10)
         {
             Sounds.A.Play(5);
         }
@@ -86,7 +82,7 @@ public class Player : MonoBehaviour
         {
             Sounds.A.Play(1);
         }
-        base.GetComponent<Animation>().Play();
+        GetComponent<Animation>().Play();
         int num = RoomSpace.M.Move(this.x, this.y, this.dx, this.dy, 1);
         if (num == 1)
         {
@@ -104,7 +100,7 @@ public class Player : MonoBehaviour
             {
                 Sounds.A.Play(6);
                 GameObject.Find("Win").GetComponent<Canvas>().enabled = true;
-                UnityEngine.Object.Destroy(this);
+                Destroy(this);
             }
         }
     }

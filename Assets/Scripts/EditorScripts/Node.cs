@@ -29,10 +29,18 @@ public class Node : MonoBehaviour, IPointerClickHandler, IEventSystemHandler
     {
         if (this.pos < 4)
         {
-            this.nam = base.GetComponentInParent<Text>().text;
-            if (this.FindDoor() == 1)
+            nam = base.GetComponentInParent<Text>().text;
+            try
             {
-                UnityEngine.Object.Destroy(base.gameObject);
+                if (FindDoor() == 1)
+                {
+                    Destroy(gameObject);
+                }
+            }
+            catch
+            {
+                Destroy(gameObject);
+                GetComponentInParent<Text>().color = Color.red;
             }
         }
     }
@@ -50,7 +58,7 @@ public class Node : MonoBehaviour, IPointerClickHandler, IEventSystemHandler
             return;
         }
         this.DestroyEdge(this.thisedge);
-        GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.edge);
+        GameObject gameObject = Instantiate<GameObject>(this.edge);
         gameObject.transform.SetParent(base.transform.parent);
         gameObject.GetComponent<Edge>().Point1(base.gameObject);
         this.thisedge = gameObject;

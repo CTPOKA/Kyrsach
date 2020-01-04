@@ -43,13 +43,13 @@ public class RoomSpace : MonoBehaviour
         killing[8] = true;
         door[5] = true;
         door[11] = true;
+        this.LoadFloor(file);
         try
         {
-            this.LoadFloor(file);
+
         }
         catch
         {
-            Error.ErrorMassage("Ошибка чтения файла. Возможно он был поврежден");
         }
     }
 
@@ -140,11 +140,11 @@ public class RoomSpace : MonoBehaviour
         }
         if (((this.GetCell(x + dx, y + dy, level) >= 0) && intangible[this.thisRoom[level][x + dx, y + dy]]) && (this.GetCell(x + dx, y + dy, 0) > 0))
         {
-            this.RObjects[level][x, y].GetComponent<CellPos>().Move(dx, dy);
-            this.RObjects[level][x + dx, y + dy] = this.RObjects[level][x, y];
-            this.RObjects[level][x, y] = null;
-            this.thisRoom[level][x + dx, y + dy] = this.thisRoom[level][x, y];
-            this.thisRoom[level][x, y] = 0;
+            RObjects[level][x, y].GetComponent<CellPos>().Move(dx, dy);
+            RObjects[level][x + dx, y + dy] = RObjects[level][x, y];
+            RObjects[level][x, y] = null;
+            thisRoom[level][x + dx, y + dy] = thisRoom[level][x, y];
+            thisRoom[level][x, y] = 0;
             return 0;
         }
         return 1;

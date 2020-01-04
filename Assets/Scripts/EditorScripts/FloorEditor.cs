@@ -45,7 +45,7 @@ public class FloorEditor : MonoBehaviour
     public void AddRoom()
     {
         string text = base.GetComponent<Dropdown>().captionText.text;
-        if (FloorEditor.names.IndexOf(text) == -1)
+        if (names.IndexOf(text) == -1 && text != "")
         {
             GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.room);
             gameObject.transform.SetParent(base.transform.parent);
@@ -112,6 +112,6 @@ public class FloorEditor : MonoBehaviour
         {
             text += Crypt.Read("Rooms/" + FloorEditor.names[k] + ".ncs");
         }
-        Crypt.Write("Floors/" + this.save.GetComponent<InputField>().text + ".ncs", text);
+        Crypt.Write("Floors/" + save.GetComponent<InputField>().text + ".ncs", text);
     }
 }

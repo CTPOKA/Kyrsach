@@ -57,33 +57,33 @@ public class Menu : MonoBehaviour
 
     public void Init()
     {
-        List<string> list = new List<string>();
-        string[] files = Directory.GetFiles(Application.persistentDataPath + "/Floors", "*.ncs");
-        for (int i = 0; i < files.Length; i++)
-        {
-            string text = files[i];
-            string text2;
-            if (Crypt.Check(text))
-            {
-                text2 = "✔ ";
-            }
-            else
-            {
-                text2 = "";
-            }
-            text2 += text.Split(new char[]
-            {
-                    '\\'
-            })[1].Split(new char[]
-            {
-                    '.'
-            })[0];
-            list.Add(text2);
-        }
-        this.dlist.GetComponent<Dropdown>().ClearOptions();
-        this.dlist.GetComponent<Dropdown>().AddOptions(list);
         try
         {
+            List<string> list = new List<string>();
+            string[] files = Directory.GetFiles(Application.persistentDataPath + "/Floors", "*.ncs");
+            for (int i = 0; i < files.Length; i++)
+            {
+                string text = files[i];
+                string text2;
+                if (Crypt.Check(text))
+                {
+                    text2 = "✔ ";
+                }
+                else
+                {
+                    text2 = "";
+                }
+                text2 += text.Split(new char[]
+                {
+                    '\\'
+                })[1].Split(new char[]
+                {
+                    '.'
+                })[0];
+                list.Add(text2);
+            }
+            dlist.GetComponent<Dropdown>().ClearOptions();
+            dlist.GetComponent<Dropdown>().AddOptions(list);
         }
         catch
         {
