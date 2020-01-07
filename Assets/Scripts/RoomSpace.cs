@@ -15,8 +15,9 @@ public class RoomSpace : MonoBehaviour
     public int maxX;
     public int maxY;
     public static int[] roomid = new int[2];
-    public static RoomSpace M;
     public static string file;
+    public static bool newgame;
+    public static RoomSpace M;
     public static BitArray intangible;
     public static BitArray bigobject;
     public static BitArray movable;
@@ -26,13 +27,13 @@ public class RoomSpace : MonoBehaviour
     private void Awake()
     {
         M = this;
-        this.RObjects[0] = new GameObject[0, 0];
-        this.RObjects[1] = new GameObject[0, 0];
-        intangible = new BitArray(this.objects.Length + 2);
-        bigobject = new BitArray(this.objects.Length + 2);
-        movable = new BitArray(this.objects.Length + 2);
-        killing = new BitArray(this.objects.Length + 2);
-        door = new BitArray(this.objects.Length + 2);
+        RObjects[0] = new GameObject[0, 0];
+        RObjects[1] = new GameObject[0, 0];
+        intangible = new BitArray(objects.Length + 2);
+        bigobject = new BitArray(objects.Length + 2);
+        movable = new BitArray(objects.Length + 2);
+        killing = new BitArray(objects.Length + 2);
+        door = new BitArray(objects.Length + 2);
         intangible[0] = true;
         intangible[12] = true;
         movable[4] = true;
@@ -43,93 +44,87 @@ public class RoomSpace : MonoBehaviour
         killing[8] = true;
         door[5] = true;
         door[11] = true;
-        this.LoadFloor(file);
-        try
+        if (newgame)
         {
-
+            LoadFloor(file);
+            newgame = false;
         }
-        catch
-        {
-        }
+        else LoadFloor();
     }
 
     public int GetCell(int x, int y, int level = 1)
     {
-        if (((x >= 0) && (y >= 0)) && ((x < this.thisRoom[0].GetLength(0)) && (y < this.thisRoom[0].GetLength(1))))
+        if ((x >= 0) && (y >= 0) && (x < thisRoom[0].GetLength(0)) && (y < thisRoom[0].GetLength(1)))
         {
-            return this.thisRoom[level][x, y];
+            return thisRoom[level][x, y];
         }
         return -1;
     }
 
     public GameObject GetObject(int x, int y, int level = 1)
     {
-        if ((((x >= 0) && (y >= 0)) && ((x < this.thisRoom[level].GetLength(0)) && (y < this.thisRoom[level].GetLength(1)))) && (this.GetCell(x, y, level) != 0))
+        if ((x >= 0) && (y >= 0) && (x < thisRoom[level].GetLength(0)) && (y < thisRoom[level].GetLength(1)) && (this.GetCell(x, y, level) != 0))
         {
-            return this.RObjects[level][x, y];
+            return RObjects[level][x, y];
         }
         return null;
     }
 
     public void LoadFloor(string path = "lastsave.ncs")
     {
-        string[] strArray2;
+        string[] tmpstr;
         this.keys[0] = 0;
         this.keys[1] = 0;
         if (path == "")
         {
             path = file;
         }
-        char[] separator = new char[] { '|' };
-        string[] strArray = Crypt.Read(path).Split(separator);
+        string[] strArray = Crypt.Read(path).Split('|');
         int index = 0;
-        char[] chArray2 = new char[] { ' ' };
-        int num2 = int.Parse(strArray[index].Split(chArray2)[0]);
+        int num2 = int.Parse(strArray[index].Split(' ')[0]);
         index++;
-        this.map = new int[num2, 8];
-        this.floor = new int[num2][][,];
+        map = new int[num2, 8];
+        floor = new int[num2][][,];
         for (int i = 0; i < num2; i++)
         {
             this.floor[i] = new int[2][,];
             char[] chArray3 = new char[] { ' ' };
-            strArray2 = strArray[index].Split(chArray3);
+            tmpstr = strArray[index].Split(chArray3);
             index++;
             for (int k = 0; k < 8; k++)
             {
-                this.map[i, k] = int.Parse(strArray2[k]);
+                this.map[i, k] = int.Parse(tmpstr[k]);
             }
         }
-        char[] chArray4 = new char[] { ' ' };
-        strArray2 = strArray[index].Split(chArray4);
+        tmpstr = strArray[index].Split(' ');
         index++;
-        roomid[0] = int.Parse(strArray2[0]);
-        roomid[1] = int.Parse(strArray2[1]);
+        roomid[0] = int.Parse(tmpstr[0]);
+        roomid[1] = int.Parse(tmpstr[1]);
         for (int j = 0; j < num2; j++)
         {
-            char[] chArray5 = new char[] { ' ' };
-            strArray2 = strArray[index].Split(chArray5);
+            tmpstr = strArray[index].Split(' ');
             index++;
-            int num6 = int.Parse(strArray2[0]);
-            int num7 = int.Parse(strArray2[1]);
+            int x = int.Parse(tmpstr[0]);
+            int y = int.Parse(tmpstr[1]);
             for (int k = 0; k < 2; k++)
             {
-                this.floor[j][k] = new int[num6, num7];
-                for (int m = 0; m < num7; m++)
+                floor[j][k] = new int[x, y];
+                for (int m = 0; m < y; m++)
                 {
-                    char[] chArray6 = new char[] { ' ' };
-                    strArray2 = strArray[index].Split(chArray6);
+                    tmpstr = strArray[index].Split(' ');
                     index++;
-                    for (int n = 0; n < num6; n++)
+                    for (int n = 0; n < x; n++)
                     {
-                        if ((this.floor[j][k][n, m] = int.Parse(strArray2[n])) == 12)
+                        if ((floor[j][k][n, m] = int.Parse(tmpstr[n])) == 12)
                         {
-                            this.keys[0]++;
+                            keys[0]++;
                         }
                     }
                 }
             }
+            if (path == "lastsave.ncs") file = strArray[index];
         }
-        this.PrintRoom(roomid[0], roomid[1]);
+        PrintRoom(roomid[0], roomid[1]);
     }
 
     public int Move(int x, int y, int dx, int dy, int level = 1)
@@ -152,16 +147,17 @@ public class RoomSpace : MonoBehaviour
 
     public void NextRoom(int door)
     {
-        this.keys[0] -= this.keys[1];
-        this.keys[1] = 0;
-        int num = this.map[roomid[0], door] - 1;
-        if (this.map[roomid[0], door] != 0)
+        keys[0] -= keys[1];
+        keys[1] = 0;
+        int num = map[roomid[0], door] - 1;
+        if (map[roomid[0], door] != 0)
         {
-            this.SaveRoom();
-            roomid[1] = this.map[roomid[0], door + 4];
+            SaveRoom();
+            roomid[1] = map[roomid[0], door + 4];
             roomid[0] = num;
-            this.PrintRoom(roomid[0], roomid[1]);
+            PrintRoom(roomid[0], roomid[1]);
         }
+        SaveGame();
     }
 
     public void PrintRoom(int room, int pos)
@@ -240,18 +236,18 @@ public class RoomSpace : MonoBehaviour
             }
         }
         R = this.floor[room];
-        this.maxX = R[0].GetLength(0);
-        this.maxY = R[0].GetLength(1);
+        maxX = R[0].GetLength(0);
+        maxY = R[0].GetLength(1);
         int[] numArray = FindDoor(pos);
         if (numArray != null)
         {
             int x = numArray[0];
             int y = numArray[1];
             ClearRoom();
-            this.thisRoom[0] = new int[this.maxX, this.maxY];
-            this.thisRoom[1] = new int[this.maxX, this.maxY];
-            this.RObjects[0] = new GameObject[this.maxX, this.maxY];
-            this.RObjects[1] = new GameObject[this.maxX, this.maxY];
+            thisRoom[0] = new int[this.maxX, this.maxY];
+            thisRoom[1] = new int[this.maxX, this.maxY];
+            RObjects[0] = new GameObject[this.maxX, this.maxY];
+            RObjects[1] = new GameObject[this.maxX, this.maxY];
             for (int i = 0; i < this.maxX; i++)
             {
                 for (int j = 0; j < this.maxY; j++)
@@ -261,32 +257,31 @@ public class RoomSpace : MonoBehaviour
                         this.thisRoom[k][i, j] = R[k][i, j];
                         if (((R[k][i, j] > 0) && (R[k][i, j] <= this.objects.Length)) && (R[k][i, j] != 2))
                         {
-                            GameObject obj2 = Instantiate<GameObject>(this.objects[R[k][i, j] - 1]);
+                            GameObject obj2 = Instantiate(objects[R[k][i, j] - 1]);
                             obj2.GetComponent<CellPos>().SetPos(i, j, k * 0.5f);
                             this.RObjects[k][i, j] = obj2;
                         }
                     }
                 }
             }
-            this.objects[1].GetComponent<CellPos>().SetPos(x, y, 0.5f);
-            this.objects[1].GetComponent<Rotation>().rotation = Rotation.Flip(pos);
-            this.RObjects[1][x, y] = this.objects[1];
-            this.SetCell(x, y, 2, 1);
+            objects[1].GetComponent<CellPos>().SetPos(x, y, 0.5f);
+            objects[1].GetComponent<Rotation>().rotation = Rotation.Flip(pos);
+            RObjects[1][x, y] = this.objects[1];
+            SetCell(x, y, 2, 1);
         }
     }
 
     public void SaveGame(string path = "lastsave.ncs")
     {
         string str2;
-        string data = "";
-        int length = this.floor.Length;
-        data = data + ((int)length).ToString() + " -|";
+        int length = floor.Length;
+        string data = length.ToString() + " -|";
         for (int i = 0; i < length; i++)
         {
             str2 = "";
             for (int k = 0; k < 8; k++)
             {
-                str2 = str2 + ((int)this.map[i, k]).ToString();
+                str2 += map[i, k].ToString();
                 if (k < 7)
                 {
                     str2 = str2 + " ";
@@ -294,14 +289,14 @@ public class RoomSpace : MonoBehaviour
             }
             data = data + str2 + "|";
         }
-        string[] textArray1 = new string[] { data, ((int)roomid[0]).ToString(), " ", ((int)roomid[1]).ToString(), "|" };
-        data = string.Concat((string[])textArray1);
+        string[] textArray1 = new string[] { data, roomid[0].ToString(), " ", roomid[1].ToString(), "|" };
+        data = string.Concat(textArray1);
         for (int j = 0; j < length; j++)
         {
             int num5 = this.floor[j][0].GetLength(0);
             int num6 = this.floor[j][0].GetLength(1);
-            string[] textArray2 = new string[] { data, ((int)num5).ToString(), " ", ((int)num6).ToString(), "|" };
-            data = string.Concat((string[])textArray2);
+            string[] textArray2 = new string[] { data, num5.ToString(), " ", num6.ToString(), "|" };
+            data = string.Concat(textArray2);
             for (int k = 0; k < 2; k++)
             {
                 for (int m = 0; m < num6; m++)
@@ -309,7 +304,7 @@ public class RoomSpace : MonoBehaviour
                     str2 = "";
                     for (int n = 0; n < num5; n++)
                     {
-                        str2 = str2 + ((int)this.floor[j][k][n, m]);
+                        str2 += floor[j][k][n, m];
                         if (n < (num5 - 1))
                         {
                             str2 = str2 + " ";
@@ -319,6 +314,7 @@ public class RoomSpace : MonoBehaviour
                 }
             }
         }
+        if (path == "lastsave.ncs") data += file;
         Crypt.Write(path, data);
     }
 
@@ -334,7 +330,7 @@ public class RoomSpace : MonoBehaviour
                 {
                     if (this.thisRoom[i][k, j] != 2)
                     {
-                        this.floor[roomid[0]][i][k, j] = this.thisRoom[i][k, j];
+                        floor[roomid[0]][i][k, j] = thisRoom[i][k, j];
                     }
                 }
             }
@@ -352,7 +348,7 @@ public class RoomSpace : MonoBehaviour
         this.thisRoom[level][x, y] = v;
         if ((v > 0) && (v <= this.objects.Length))
         {
-            GameObject obj2 = Instantiate<GameObject>(this.objects[v - 1]);
+            GameObject obj2 = Instantiate(objects[v - 1]);
             obj2.GetComponent<CellPos>().SetPos(x, y, level * 0.5f);
             this.RObjects[level][x, y] = obj2;
             return obj2;

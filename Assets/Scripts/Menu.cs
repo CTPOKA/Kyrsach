@@ -73,13 +73,7 @@ public class Menu : MonoBehaviour
                 {
                     text2 = "";
                 }
-                text2 += text.Split(new char[]
-                {
-                    '\\'
-                })[1].Split(new char[]
-                {
-                    '.'
-                })[0];
+                text2 += text.Split('\\')[1].Split('.')[0];
                 list.Add(text2);
             }
             dlist.GetComponent<Dropdown>().ClearOptions();
@@ -93,25 +87,26 @@ public class Menu : MonoBehaviour
 
     public void LoadNewGame()
     {
+        RoomSpace.newgame = true;
         string text = this.dlist.GetComponent<Dropdown>().captionText.text;
         if (text.IndexOf("✔") >= 0)
         {
             text = text.Remove(0, 2);
         }
-        this.LoadGame("Floors/" + text + ".ncs");
+        LoadGame("Floors/" + text + ".ncs");
     }
 
     public void RemoveGame()
     {
         try
         {
-            string text = this.dlist.GetComponent<Dropdown>().captionText.text;
+            string text = dlist.GetComponent<Dropdown>().captionText.text;
             if (text.IndexOf("✔") >= 0)
             {
                 text = text.Remove(0, 2);
             }
             File.Delete(Application.persistentDataPath + "/Floors/" + text + ".ncs");
-            this.Init();
+            Init();
         }
         catch
         {

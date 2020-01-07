@@ -17,6 +17,7 @@ public class Edge : MonoBehaviour
 
     public GameObject point2;
 
+    [Obsolete]
     private void Update()
     {
         this.UpdatePos();

@@ -298,7 +298,8 @@ public class Editor : MonoBehaviour
             {
                 file = text;
             }
-            this.SaveRoom(file + ".ncs");
+            if (!OFF[2])
+            SaveRoom(file + ".ncs");
             FloorEditor.names.Clear();
             FloorEditor.map.Clear();
             SceneManager.LoadScene("menu");

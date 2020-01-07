@@ -47,7 +47,7 @@ public class FloorEditor : MonoBehaviour
         string text = base.GetComponent<Dropdown>().captionText.text;
         if (names.IndexOf(text) == -1 && text != "")
         {
-            GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.room);
+            GameObject gameObject = Instantiate(room);
             gameObject.transform.SetParent(base.transform.parent);
             gameObject.GetComponent<RectTransform>().position = base.GetComponent<RectTransform>().position + 100f * Vector3.up;
             gameObject.GetComponentInChildren<Text>().text = text;

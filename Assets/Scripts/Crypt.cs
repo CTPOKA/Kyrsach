@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
@@ -16,23 +15,19 @@ public class Crypt : MonoBehaviour
 
     public static bool Check(string filepath)
     {
-        FileStream stream1 = new FileStream(filepath, FileMode.Open, FileAccess.Read);
-        CryptoStream stream = new CryptoStream(stream1, crypt.CreateDecryptor(), CryptoStreamMode.Read);
-        StreamReader sr = new StreamReader(stream);
         bool ch = false;
         try
         {
-            string str = sr.ReadToEnd();
-            stream1.Close();
-            stream.Close();
-            sr.Close();
+            string str;
+            using (FileStream stream1 = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+            using (CryptoStream stream = new CryptoStream(stream1, crypt.CreateDecryptor(), CryptoStreamMode.Read))
+            //string stream = filepath;
+            using (StreamReader sr = new StreamReader(stream))
+                str = sr.ReadToEnd();
             ch = str.Split('|')[0].Split(' ')[1] == "+";
         }
         catch
         {
-            stream1.Close();
-            stream.Close();
-            sr.Close();
             Error.ErrorMassage("Ошибка чтения файла " + filepath);
         }
         return ch;
@@ -40,44 +35,34 @@ public class Crypt : MonoBehaviour
 
     public static string Read(string filepath)
     {
-        FileStream stream1 = new FileStream(Application.persistentDataPath + "/" + filepath, FileMode.Open, FileAccess.Read);
-        CryptoStream stream = new CryptoStream(stream1, crypt.CreateDecryptor(), CryptoStreamMode.Read);
-        StreamReader sr = new StreamReader(stream);
+        string str = null;
         try
         {
-            string str = sr.ReadToEnd();
-            stream1.Close();
-            stream.Close();
-            sr.Close();
-            return str;
-        } 
+            using (FileStream stream1 = new FileStream(Application.persistentDataPath + "/" + filepath, FileMode.Open, FileAccess.Read))
+            using (CryptoStream stream = new CryptoStream(stream1, crypt.CreateDecryptor(), CryptoStreamMode.Read))
+            //string stream = Application.persistentDataPath + "/" + filepath;
+            using (StreamReader sr = new StreamReader(stream))
+                str = sr.ReadToEnd();
+        }
         catch
         {
-            stream1.Close();
-            stream.Close();
-            sr.Close();
             Error.ErrorMassage("Ошибка чтения файла " + filepath);
-            return null;
         }
+        return str;
     }
 
     public static void Write(string filepath, string data)
     {
-        FileStream stream1 = new FileStream(Application.persistentDataPath + "/" + filepath, (FileMode)FileMode.OpenOrCreate, (FileAccess)FileAccess.Write);
-        CryptoStream stream2 = new CryptoStream((Stream)stream1, crypt.CreateEncryptor(), (CryptoStreamMode)CryptoStreamMode.Write);
-        StreamWriter writer1 = new StreamWriter((Stream)stream2);
         try
         {
-            writer1.Write(data);
-            writer1.Close();
-            stream2.Close();
-            stream1.Close();
+            using (FileStream stream1 = new FileStream(Application.persistentDataPath + "/" + filepath, FileMode.OpenOrCreate, FileAccess.Write))
+            using (CryptoStream stream = new CryptoStream(stream1, crypt.CreateEncryptor(), CryptoStreamMode.Write))
+            //string stream = Application.persistentDataPath + "/" + filepath;
+            using (StreamWriter sw = new StreamWriter(stream))
+                sw.Write(data);
         }
         catch 
         {
-            writer1.Close();
-            stream2.Close();
-            stream1.Close();
             Error.ErrorMassage("Ошибка сохранения файла " + filepath);
         }
 
